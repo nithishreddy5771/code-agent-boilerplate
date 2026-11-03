@@ -8,7 +8,6 @@ from uuid import uuid4
 
 from .models import CreateRunRequest, RunPlan, RunStage
 
-
 HUMAN_GATES = [RunStage.EVALUATE, RunStage.IMPLEMENT, RunStage.DRAFT_PR]
 
 
