@@ -10,6 +10,7 @@ It deliberately contains no company-specific repositories, knowledge, credential
 - A human-gated workflow: analyse → evaluate → implement → test → review → draft PR
 - Typed repository contracts with edit-path allowlists
 - Provider interfaces for an LLM agent, source control, test runner, and knowledge store
+- Optional Deep Agents runtime with AWS Bedrock and isolated per-run workspaces
 - Container and environment templates
 
 ## Quick start
@@ -33,6 +34,24 @@ curl -X POST http://127.0.0.1:8000/v1/runs \
 ```
 
 The starter only plans the run. Connect concrete providers before allowing implementation or PR creation.
+
+## Deep Agents with Bedrock
+
+The starter includes an optional Deep Agents runtime. It stages only the
+repository's `allowed_edit_paths` from `SANDBOX_SOURCE_ROOT/<repository-id>`
+into a fresh workspace under `SANDBOX_WORK_ROOT`. Secret-like files, VCS
+metadata, virtual environments, dependency folders, and build output are
+excluded.
+
+`POST /v1/deep-agent/runs` defaults to `"execute": false`, which validates the
+repository contract and creates the isolated workspace without contacting AWS.
+Set `"execute": true` only after configuring AWS credentials outside this
+repository. The runtime uses the standard AWS credential provider chain and
+the `DEEP_AGENT_MODEL_ID` / `AWS_REGION` environment variables.
+
+Deep Agents requires approval interrupts for file writes, edits, and deletes.
+Branch creation, pushing, and draft-PR creation are intentionally not exposed
+as tools in this starter; add them through an approved source-control adapter.
 
 ## Integration points
 

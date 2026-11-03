@@ -2,7 +2,7 @@
 
 from enum import StrEnum
 
-from pydantic import BaseModel, Field, HttpUrl
+from pydantic import BaseModel, Field
 
 
 class RunStage(StrEnum):
@@ -34,3 +34,20 @@ class RunPlan(BaseModel):
     human_gates: list[RunStage]
     next_stage: RunStage
     safety_notes: list[str]
+
+
+class DeepAgentRunRequest(BaseModel):
+    """A Deep Agent request rooted at a repository below the configured source root."""
+
+    repository: RepositoryContract
+    request: str = Field(min_length=1, max_length=20_000)
+    execute: bool = False
+
+
+class DeepAgentRunResponse(BaseModel):
+    run_id: str
+    status: str
+    workspace: str
+    model: str
+    output: str | None = None
+    approval_required_for: list[str]
